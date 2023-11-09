@@ -1,24 +1,24 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_HOST = 'tcp://localhost:2375' // Define the Docker host for the Jenkins agent
-    }
-
     stages {
         stage('Forward Docker Socket') {
             steps {
                 script {
                     def remoteHost = 'ec2-16-171-64-39.eu-north-1.compute.amazonaws.com' // Replace with your remote server's IP or hostname
                     def remoteUser = 'ubuntu' // Replace with your SSH username
+                    def localPort = 2375 // Use a different local port if 2375 is in use
 
                     // Set up the SSH tunnel for Docker socket forwarding
-                    sshagent(credentials: ['ubuntu-staging']) {
+                    sshagent(credentials: ['your-ssh-credentials-id']) {
                         sh """
-                            ssh -f -N -L 2375:/var/run/docker.sock ${remoteUser}@${remoteHost}
+                            ssh -f -N -L ${localPort}:/var/run/docker.sock ${remoteUser}@${remoteHost}
                             sleep 5 # Give the tunnel time to establish
                         """
                     }
+
+                    // Set the DOCKER_HOST environment variable to communicate with the forwarded Docker socket
+                    env.DOCKER_HOST = "tcp://localhost:${localPort}"
                 }
             }
         }
@@ -26,7 +26,10 @@ pipeline {
         stage('Docker Commands') {
             steps {
                 script {
-                    // Use the DOCKER_HOST environment variable to communicate with the remote Docker daemon
+                    // Install Docker client within the Jenkins agent's environment
+                    sh "curl -fsSL https://get.docker.com | sh"
+                    
+                    // Now Docker should be available for use
                     sh """
                         docker ps
                         # Add more Docker commands as needed
