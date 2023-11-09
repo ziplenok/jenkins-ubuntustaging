@@ -15,7 +15,7 @@ pipeline {
                     // Set up the SSH tunnel for Docker socket forwarding
                     sshagent(credentials: ['ubuntu-staging']) {
                         sh """
-                            ssh -f -N -L 2375:/var/run/docker.sock ${remoteUser}@${remoteHost}
+                            ssh -f -N -L /var/run/docker.sock:/var/run/docker.sock ${remoteUser}@${remoteHost}
                             sleep 5 # Give the tunnel time to establish
                         """
                     }
