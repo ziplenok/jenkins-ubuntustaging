@@ -9,7 +9,7 @@ pipeline {
         stage('Forward Docker Socket') {
             steps {
                 script {
-                    def remoteHost = 'ec2-51-20-103-229.eu-north-1.compute.amazonaws.com' // Replace with your remote server's IP or hostname
+                    def remoteHost = 'ec2-16-171-64-39.eu-north-1.compute.amazonaws.com' // Replace with your remote server's IP or hostname
                     def remoteUser = 'ubuntu' // Replace with your SSH username
 
                     // Set up the SSH tunnel for Docker socket forwarding
