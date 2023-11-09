@@ -9,13 +9,11 @@ pipeline {
 			steps {
 				script {
 
-					sshagent(credentials: ['ec2-16-171-64-39.eu-north-1.compute.amazonaws.com']) {
+					sshagent(credentials: ['ubuntu-staging']) {
 						
-						sh """
-							ssh -nNT -L \$(pwd)/docker.sock:/var/run/docker.sock ${STAGE_INSTANCE} & echo \$! > /tmp/tunnel.pid
+						sh "ssh -nNT -L \$(pwd)/docker.sock:/var/run/docker.sock ${STAGE_INSTANCE} & echo \$! > /tmp/tunnel.pid"
 							// sometimes it's not enough time to make a tunnel, add sleep
-							sleep 5
-						"""	
+						sleep 5	
 					}
 				}
 			}
@@ -23,9 +21,7 @@ pipeline {
 		stage('Deploy') {
 			steps {
 				script {
-					sh """ 
-						docker ps -a 
-					"""
+					sh "DOCKER_HOST=${DOCKER_HOST} docker ps -a
 				}
 			}
 		}
@@ -33,9 +29,7 @@ pipeline {
 	post {
 		always {
 			script {
-				sh """ 
-					pkill -F /tmp/tunnel.pid
-				"""
+				sh "pkill -F /tmp/tunnel.pid"
 			}
 		}
 	}
