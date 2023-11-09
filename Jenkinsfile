@@ -8,6 +8,8 @@ pipeline {
 		stage('Setup SSH tunnel') {
 			steps {
 				script {
+
+					sshagent(credentials: ['ec2-16-171-64-39.eu-north-1.compute.amazonaws.com'])
 					sh "ssh -i /var/lib/jenkins/.ssh/jenkins-key -nNT -L \$(pwd)/docker.sock:/var/run/docker.sock ${STAGE_INSTANCE} & echo \$! > /tmp/tunnel.pid"
 					// sometimes it's not enough time to make a tunnel, add sleep
 					sleep 5
