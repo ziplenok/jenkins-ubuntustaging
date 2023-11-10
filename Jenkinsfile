@@ -15,18 +15,17 @@ pipeline {
 							// sometimes it's not enough time to make a tunnel, add sleep
 						sleep 5	
 						
-						sh "DOCKER_HOST=${DOCKER_HOST} docker ps -a"
 					}
 				}
 			}
 		}
-//		stage('Deploy') {
-//			steps {
-//				script {
-//					sh "DOCKER_HOST=${DOCKER_HOST} docker ps -a"
-//				}
-//			}
-//		}
+		stage('Deploy') {
+			steps {
+				script {
+					sh "DOCKER_HOST=${DOCKER_HOST} docker ps -a"
+				}
+			}
+		}
 	}
 	post {
 		always {
